@@ -1,0 +1,224 @@
+AWS_Big_Data
+
+
+6) Collection Section
+
+   Real Time - Immediate Actions
+
+   . Kinesis Data Streams
+   . Simple Queue Service
+   . Internet of Things
+
+   Near real time - Reactive Actions
+
+   . Kinesis Data Firehose
+   . Data Migration Service
+
+   Batch Historical Analysis
+
+   . Snowball
+   . Data Pipeline
+
+
+7) Kinesis Data Streams overview
+
+   Kinesis is a Managed alternative to Apache Kafka. Kinesis is comprised of multiple services. 
+
+   First one is Kinesis Data Streams which is low latency streaming ingest at scale. It can take data from various sources like click streams, IoT, Metrics & logs etc.
+   Second one is Kinesis Analytics which perform real time analytics on streams using SQL. 
+   Last one is Kinesis Firehose which loads streams into S3, Redshift, ElasticSearch and Splunk. 
+
+   Producers can write data into Kinesis shards(partitions). Consumers can read the data from those shards. 
+   Data default retention is 24hrs. we can change the configuration upto 7 days.
+
+   Multiple applications can consume the same stream. 
+   Once the data is inserted in Kinesis, it cant be deleted (immutability)
+
+
+   Producer and Consumer limits. 
+   Producer - 1MB/s at write per shard. If it exceeds we get ProvisionedThroughputException
+   Consumer - 2MB/s across all consumers per shard. If we have 3 shards then total aggregate throughput is 6MB/s for downstream. 
+
+8) Kinesis Producers
+
+   Kinesis SDK will allow you to write code or use CLI to directly send data to Kinesis streams. 
+   Kinesis Producer Library (KPL) will give APIs which allows enhanced throughput capability
+   Kinesis Agents is Linux program which runs on servers which allows for e.g logfile to reliably send on Kinesis stream.
+   Can also be 3rd party libraries such as Apache Spark, Kafka, Flume etc. 
+
+   Producer SDK - PutRecord/PutRecords
+   SDK is preferred in the case of low throughputs or when higher latency is not a problem or simple APIs, AWS Lambda etc..
+
+   Producer Library (KPL)
+   Easy to use and highly configurable C++/Java Libraries
+   Used for building high performance, long-running producers 
+   Batching
+    . Collect -  writes to multiple shards in the same PutRecords API call
+    . Aggregate (increased latency) - Capability to store multiple records in one record. 
+
+   Compression is not supported by KPL, it has to be handled by user.
+   KPL records must be de-coded with Kinesis Client Library (KCL)
+
+
+9) Kinesis Consumers
+
+   Kinesis SDK
+   Kinesis client library
+   Kinesis Connector library
+   3rd party libraries such as Apache Spark is able to read data from Kinesis data stream as a consumer
+   Kinesis Firehose
+   AWS Lambda
+
+   SDK - GetRecords
+
+   KCL
+
+    Java first library
+    Read records from Kinesis produced with KPL (de-aggregation)
+    Share multiple shards with multiple consumers in one group
+    Leverages DynamoDB for coordination or checkpointing
+    Record processors will process the data
+
+   Kinesis Connector Library
+
+    Connector library leverages KCL library in that it takes data from stream and write to S3, DynamoDB, Redshift or ElasticSearch.
+    Kinesis Firehose replaces the Connector library for a few of these targets (S3 and Redshift), Lambda for others.
+
+    Kinesis Connector Library is kind of deprecated and got replaced by Kinesis Firehose and Lambda
+
+
+    AWS Lambda sourcing from Kinesis
+
+     AWS Lambda can source records from Kinesis datastreams. Lambda has a library to de-aggregate record from KPL
+     Lambda can be used to run lightweight ETL to: 
+      . Amazon S3
+      . Dynamo DB
+      . Redshift
+      . Elastic Search
+
+     Lambda can be used to trigger notifications in real time
+
+10) Kinesis enhanced Fan Out will give the capability of increasing consumer throughput of 2MB/s for each shard per consumer. 
+
+11) Kinesis scaling
+
+13) AWS Kinesis Data Firehose
+
+    . Fully managed service, no administration 
+    . Near real time - 60 secs min latency time
+    . We use Firehose for loading data into Redshift/ S3/ ElasticSearch/ Splunk
+    . Automatic scaling, Supports many data formats
+    . Can convert data from JSON to Parquet/ORC (only for S3)
+    . Supports compression when target is S3 
+    . Spark/KCL do not read from KDF
+
+   Following can write data into KDF SDK/Kinesis Agent/Kinesis Data Streams/Cloudwatch logs/ IoT rules
+
+
+   Kinesis Data Firehose is able to do some data transformation using Lambda before delivery. 
+
+   Kinesis Data Streams Vs Firehose
+
+    . In streams we should write custom code for producers and consumers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

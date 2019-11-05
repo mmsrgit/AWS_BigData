@@ -1,0 +1,300 @@
+Virtual IP and Private IP
+AMI - Amazon Machine Image - AMI is a template which will give you certain features on top of base operating systems. We have selected centos AMI from market place
+IAM - Identity and Access Management - IAM is related to security wrt users who was given access to aws.
+s3 - simple storage service
+MFA - multi factor authentication
+
+Access Key/ Secret Key  with "aws configure" - what does it give
+.pem file - what does it give
+
+keypair will give you provision to ssh.
+
+In corporate model, ec2 instance and emr combined.
+
+why should we create ec2 instance from root account?
+
+   $ chmod 400 freetierdemo.pem
+   $ ssh -i freetierdemo.pem centos@ec2-35-182-198-207.ca-central-1.compute.amazonaws.com
+
+   $ sudo yum -y install epel-release
+   $ sudo yum -y install python-pip
+   $ pip install aws --upgrade --user
+   $
+
+
+
+
+
+6) Create EC2 first instance
+
+   Add tags 
+   key - Name
+   value - centos7freetier
+
+   Configure Security Group is a kind of fire wall
+   centos7freetierdemo
+
+   Launch
+   Create a new key pair, freetierdemo
+
+
+7) Connecting to EC2 instance
+
+   Download the pem file and use the connect button which opens a popup giving the connect command. pem file should be placed in the folder from which you are giving ssh command in the terminal or we can give the full path of pem file from root. Before giving ssh command, it is important to change the permissions of the pem file.
+
+   $ chmod 400 freetierdemo.pem
+
+   $ ssh -i freetierdemo.pem centos@ec2-35-182-198-207.ca-central-1.compute.amazonaws.com
+
+   In the above command "ec2-35-182-198-207.ca-central-1.compute.amazonaws.com" is the public dns. After we connect, give hostname to know host name of ec2 instance which is private dns
+   ec2-35-182-198-207.ca-central-1.compute.amazonaws.com
+   ip-172-31-5-13.ca-central-1.compute.internal 
+
+   df -h command to see the capacity
+
+8) Understanding EC2 dashboard left menu
+
+   snapshot - image of hard disk at a given amount of time
+
+   keypair - is to connect to the ec2 instance
+
+   security groups - suppose we have configured web server in the ec2 instance and if we have to access the logs from outside then we need to configure security group of the instance in appropriate way.
+
+9) Different EC2 instance states
+
+   Terminate will remove all the resources associated with EC2 instance  
+
+   What is the implication of stopping the instance? Everytime we stop and start the instance the new public dns name will be assigned. 
+
+10) Describing EC2 instance
+
+    VPC - Whenever we create an instance we will be provided with VPC ID. This is useful when you want to provision network of computers using different VPCs
+    Root Device and Block Device which are related to the storage.
+
+    Inbound specifies using which protocol we wanted to connect to ec2 instance. e.g. SSH, ICMP etc
+
+11) Using elastic ips to connect to EC2 instance
+
+    Allocate new address -> Allocate, will create elastic ip which you need to associate to an ec2 instance.
+
+12) Using security groups to provide security to EC2 instance
+
+    Security is externally managed in another layer in AWS
+
+	Since we have given SSH, we should be able to SSH and also telnet to the AWS instance but cannot ping. If we should also be able to ping, then we should change the inbound configuration Type to ICMP protocol. Then we will be able to ping, but will not be able to SSH or telnet. In this way we can provide security to EC2 instance 
+
+13) Understanding the concept of bastion server 
+
+	Bastion server is also called as gateway node or client node.
+
+14) Terminating EC2 instance and releiving all the resorces.
+
+	While terminating EC2 instance it will ask whether to release some resources associated with that EC2 instance like elastic ip, volume etc. We should select them to release if we do not want to get charged. While deleting the volume we should make sure that the volume is only associated with that EC2 instance which we are terminating. If the same volume is configured to provision other EC2 instances, then they will also get affected.
+
+	After terminating the instance, we manually delete keypair and security group. If keypair is associated with multiple instances, then we should not delete key-pair as it will be associated with not only the instance which we are terminating.
+
+	After termination, the instance state is turned to terminated. Then we can go to volumes and delete it. While deleting volume also we should make sure it is not associated with another instance.
+
+
+15) Create security credentials for AWS account (access and secret key)
+
+    Your Security Credentials -> Access Keys -> Create Access Key
+
+    At any given point we will be able to have only two access key. Each Access Key will have associated secret key which will be displayed only at the time of creation. We can also download as a file containing access key and secret key. 
+
+    This file is necessary to setup command line interface (AWS CLI)
+
+16) Setting up AWS CLI
+
+    CLI will give you commands using which you have provision to create, manage and delete the resources as we do in web console. 
+    As AWS is pay as you go modal, CLI is extremely  useful in creating/running scripts which create ec2 instances/clusters, executes the job/process the data and terminate the instances/clusters to keep the costs down.
+    AWS also provide APIs for different programming languages to access resources.
+
+    After installing AWS CLI, we need to connect the CLI with the account using access key and secret key. 
+
+    Your Account -> My Security Credentials -> Access Key -> Create new Access Key
+    
+    First create Access Key and download when creating
+    After installing cli, give following command
+
+    aws configure 
+
+    This process will create hidden directory ".aws" in home directory and create two files credentials and config files.
+
+
+
+17) Creating s3 bucket
+
+    S3 -> create bucket
+
+    After creating bucket, you should be able to see the details from aws cli by giving following command.
+
+    aws s3 ls
+
+18) Conclusion
+
+
+
+Section 2: User Management and Security using IAM
+
+
+19) Introduction
+
+
+20) Deleting root access
+
+   Except under some scenarios where root access keys are necessary, we should never have the root access key in active. It is very bad practice to keep it in active state.
+
+21) Enable MFA for root account
+
+22) Introduction to IAM users and customizing sign in link
+
+    We can customize IAM users sign-in link
+
+    https://mmsriam.signin.aws.amazon.com/console
+
+23) Create first IAM user 
+
+    Created first user "airita/pwd:airitaaws" and given AWS S3 read only access. We granted programatic and AWS console permissions. After doing aws configure with new access key and secret key, we are able to view the s3 bucket for this user.
+    In console we are not able to create new folder in this s3 bucket as we gave read only access to this user.
+
+24) Create group and add user
+
+    Created "mmsradmin" group and gave AWSAdmin access to this group. Changed airita's role to admin by adding to this group 
+
+25) Configure IAM password policy
+
+26) Understanding IAM best practices
+
+
+
+27) AWS Managed policies and creating custom policies
+
+    We can not only assign AWS defined policies to the user in the group, but also create custom policies. We will select service, actions and resources while creating custom policy
+
+    We can also create by cloning existing policies and can edit it as per our requirement.
+
+    We will clone by selecting 'Create Policy' -> 'Import Managed Policy'
+
+    We created following two policies - 
+
+    MsrS3ReadWriteListOnMsrfirst - This policy will give the user to read, write and list on msrfirst bucket
+
+    msrAmazonS3ReadWriteAccess - This policy will give the user to read, write and list on all buckets
+
+28) Assign policies to entities
+
+29) Creating role for EC2 trusted entity with permissions on S3
+
+    Role requires two things. First is trusted entity and second permissions from policies.
+
+    Create role -> give a name to key 'msrrolekey' -> msrEC2Role
+
+30) Assigning role to EC2 instance.
+
+    When creating new EC2 instance, in Configure Instance step there is an option to select IAM role where we can chose the role which we have created in previous step. To see the difference, first we will not select the role to understand the difference.  
+
+    Here we will create EC2 instance and connect to that EC2 instance from terminal using pem file associated with that EC2 instance. While creating ec2 instance, at 'Configure Instance Details' step we will not assign role that we created to show the difference of having and not having role. Later we will assign that role.
+
+    We will create Centos EC2 instance. To validate certain permissions on EC2 instance, we have to install aws cli on centos machine. We don't have desktop access to the centos machine. So we need to do that from command prompt of centos machine once we connect to it.
+
+    To install AWS CLI on centos, first we need to install "Enterprise LINUX" using yum as below. yum is centos installer.
+
+    $ sudo yum -y install epel-release
+
+    Above command will install enterprise based packages. After installing that, we need to install pip. PIP is python installer. Using PIP we can install aws cli.
+
+    $ sudo yum -y install python-pip
+
+    Once pip is installed, we can issue following command to install aws cli.
+
+    $ pip install awscli --upgrade --user
+
+    now, we can validate by giving aws command.
+
+    If we give "aws s3 ls" it will not work since we did not configure using access key and secret key. But if we configure in this way, it will give full access to the root account. We can bypass this by assigning role.
+
+    Let us now assign role to the EC2 instance by doing the following.
+
+    "Actions -> Instance Settings -> Attach/Replace IAM role"
+
+31) Conclusion and take aways
+
+
+Section 3: Creating EMR cluster with Spark using quick options
+
+
+32) Introduction to EMR
+
+33) EMR concepts
+
+39) Enable web connection to access web interfaces
+
+    Create foxyproxy settings file and upload in Import options in Foxyproxy settings. 
+    Give below command in new terminal window
+
+    ssh -i mmsremrkey.pem -ND 8157 hadoop@<Master Public DNS>
+
+    then the terminal window will hang perpetually. That means this server will be used as proxy whenever we try to access certain web services 
+
+40) Running spark-sql queries
+
+    aws s3 ls madaemrsource/retail_db/
+    aws s3 ls s3://madaemrsource/retail_db/ 
+
+
+    CREATE EXTERNAL TABLE orders (
+    order_id INT,
+    order_date STRING,
+    order_customer_id INT,
+    order_status STRING
+    )
+    ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+    LOCATION 's3://madaemrsource/retail_db/orders';
+
+    We can create sql script with following 
+
+      CREATE EXTERNAL TABLE orders (
+      order_id INT,
+      order_date STRING,
+      order_customer_id INT,
+      order_status STRING
+      )
+      ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+      LOCATION 's3://madaemrsource/retail_db/orders';
+
+
+      CREATE EXTERNAL TABLE order_count_by_status  
+      ROW FORMAT DELIMITED FIELDS TERMINATED BY ','  
+      LOCATION 's3://madaemrtarget/retail_db/order_count_by_status' 
+      as 
+      SELECT order_status, count(1)  count_by_status from orders group by order_status;
+
+      DROP TABLE orders;
+
+
+   To run this process-data.sql file, give following command
+
+   $ cat process-data.sql|spark-sql
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
