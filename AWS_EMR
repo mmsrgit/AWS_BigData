@@ -81,19 +81,19 @@ why should we create ec2 instance from root account?
 
     Security is externally managed in another layer in AWS
 
-	Since we have given SSH, we should be able to SSH and also telnet to the AWS instance but cannot ping. If we should also be able to ping, then we should change the inbound configuration Type to ICMP protocol. Then we will be able to ping, but will not be able to SSH or telnet. In this way we can provide security to EC2 instance 
+  Since we have given SSH, we should be able to SSH and also telnet to the AWS instance but cannot ping. If we should also be able to ping, then we should change the inbound configuration Type to ICMP protocol. Then we will be able to ping, but will not be able to SSH or telnet. In this way we can provide security to EC2 instance 
 
 13) Understanding the concept of bastion server 
 
-	Bastion server is also called as gateway node or client node.
+  Bastion server is also called as gateway node or client node.
 
 14) Terminating EC2 instance and releiving all the resorces.
 
-	While terminating EC2 instance it will ask whether to release some resources associated with that EC2 instance like elastic ip, volume etc. We should select them to release if we do not want to get charged. While deleting the volume we should make sure that the volume is only associated with that EC2 instance which we are terminating. If the same volume is configured to provision other EC2 instances, then they will also get affected.
+  While terminating EC2 instance it will ask whether to release some resources associated with that EC2 instance like elastic ip, volume etc. We should select them to release if we do not want to get charged. While deleting the volume we should make sure that the volume is only associated with that EC2 instance which we are terminating. If the same volume is configured to provision other EC2 instances, then they will also get affected.
 
-	After terminating the instance, we manually delete keypair and security group. If keypair is associated with multiple instances, then we should not delete key-pair as it will be associated with not only the instance which we are terminating.
+  After terminating the instance, we manually delete keypair and security group. If keypair is associated with multiple instances, then we should not delete key-pair as it will be associated with not only the instance which we are terminating.
 
-	After termination, the instance state is turned to terminated. Then we can go to volumes and delete it. While deleting volume also we should make sure it is not associated with another instance.
+  After termination, the instance state is turned to terminated. Then we can go to volumes and delete it. While deleting volume also we should make sure it is not associated with another instance.
 
 
 15) Create security credentials for AWS account (access and secret key)
@@ -276,6 +276,212 @@ Section 3: Creating EMR cluster with Spark using quick options
    To run this process-data.sql file, give following command
 
    $ cat process-data.sql|spark-sql
+
+
+46) To give run time arguments, goto Run -> Edit Configurations
+
+    To check sbt version, in project folder give following command
+
+    $ sbt sbtVersion
+      or
+    $ sbt about
+
+
+47)  HelloWorld program(with a runtime argument) can be run in following ways
+
+
+    $ scala target/scala-2.13/spark2demo_2.13-0.1.jar Scala
+    $ sbt "runMain HelloWorld Scala"
+
+
+48) Add spark dependencies to the application
+
+
+    Add following line to build.sbt
+
+    libraryDependencies += "<group-id>" % "<artifact-id>" % "<version>"
+
+    Enable auto-import
+
+50) Setup datasets retail_db
+
+51) Develop first spark based application - Get revenue for each order from order_items
+
+64) Official Page documentation
+
+
+    When we installed spark, in the folder spark-2.3.4-bin-hadoop2.7 there is section called examples.
+
+65) High level overview
+
+68) Programatically using Scala
+
+    setMaster and setAppName are handy methods to set environment variables. Apart from them if we have to set any other env variable, we need to use .set("<env variable>", "<value>")
+    e.g .set("spark.ui.port","14623")
+
+    To check all Master URLs, in Initializing Spark section, click on  "Spark, Mesos or YARN cluster URL" 
+    (https://spark.apache.org/docs/2.4.0/submitting-applications.html)
+
+    e.g 
+
+    local - Run Spark locally with one worker thread (i.e. no parallelism at all).
+
+    mesos://HOST:PORT - Connect to the given Mesos cluster. The port must be whichever one your is configured to use, which is 5050 by default. Or, for a Mesos cluster using ZooKeeper, use mesos://zk://.... To submit with --deploy-mode cluster, the HOST:PORT should be configured to connect to the MesosClusterDispatcher.
+
+
+
+
+ Running spark-submit in step execution mode
+ --------------------------------------------
+
+ If we have to run spark-submit command in hadoop cluster, we give following command
+
+ $ spark-submit --master yarn --class retail_db.GetRevenueForOrder --num-executors <> --executor-memory <> --jar <jar path> <program-arguments>
+
+
+ But in AWS the default mode is yarn. we need not give --master yarn. 
+
+ We give following configuration when selecting step execution
+
+ Spark submit options: --num-executors 4
+                       --executor-memory 2G
+                       --class retail_db.GetRevenueForOrder
+
+ Application Location: Select jar in S3
+
+ Arguments           : yarn s3://madaemrsource/retail_db/order_items s3://madaemrtarget/retail_db/revenueForOrder
+
+
+
+
+spark-submit --class retail_db.GetRevenueForOrder /Users/RAMA/Documents/IdeaProjects/spark2demo/target/scala-2.11/spark2demo_2.11-0.1.jar local /Users/RAMA/Desktop/hadoop/data/data_it/retail_db/order_items /Users/RAMA/Desktop/hadoop/data/data_it/results/revenue_per_order
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
